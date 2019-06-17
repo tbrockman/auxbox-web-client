@@ -60,10 +60,10 @@ export class MediaService {
   async getSong(index : number) {
     const protocol = environment.production ? 'https://' : '';
     const uri = protocol + this._songUrls[index];
-    const tag = await fetchFileAsBuffer(uri);
+    //const tag = await fetchFileAsBuffer(uri);
     let song = {
       uri: uri,
-      metadata: tag
+      metadata: undefined
     };
     return song;
   }

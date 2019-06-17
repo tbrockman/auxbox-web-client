@@ -67,9 +67,6 @@ export class AppComponent implements MediaServiceListener {
       this.updateTime();
       this.recalculateFilledRatio();
     });
-    this.$player.nativeElement.addEventListener('loadedmetadata', event => {
-      console.log(event);
-    })
     this.$player.nativeElement.addEventListener('ended', event => {
       this._mediaService.skipForward();
     })
