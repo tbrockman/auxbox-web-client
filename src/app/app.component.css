@@ -1,0 +1,149 @@
+@media only screen and (max-width: 700px) {
+    .main-container {
+        min-width: 0px !important;
+        width: 100%;
+    }
+ }
+
+.app-container {
+    align-items: center;
+    display: flex;
+    flex-grow: 1;
+    height: 100%;
+    justify-content: center;
+}
+
+.main-container {
+    max-width: 100%;
+    min-width: 600px;
+    overflow: hidden;
+    padding: 2rem;
+}
+
+.key-input-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.key-input-form > * {
+    margin-top: 1rem;
+}
+
+.key-input-form > input {
+    max-width: 100%;
+    border: none;
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    text-align: center;
+}
+
+.key-input-form > button {
+    background-color: #fa484b;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    font-weight: bold;
+    max-width: 100%;
+    padding: 0.5rem;    
+    text-transform: uppercase;
+}
+
+.key-input-form > button:hover {
+    background-color: #fa484bab;
+    color: #fff;
+    cursor: pointer;
+}
+
+.audio-control-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.audio-control-container svg {
+    fill: #fa484b;
+    height: 2rem;
+    width: 2rem;
+}
+
+.audio-control-container svg:hover {
+    fill: #fff;
+    cursor: pointer;
+}
+
+.seek-bar-container {
+    display: flex;
+    height: 0.25rem;
+    margin: 1rem 0;
+    padding: 1rem 0;
+    position: relative;
+    width: 100%;
+}
+
+.seek-bar-container:hover {
+    cursor: pointer;
+}
+
+.seek-bar-remaining {
+    background-color: #fa484b36;
+    flex-grow: 1;
+}
+
+.seek-bar-buffer {
+    background-color: #fff;
+    width: 0%;
+}
+
+.seek-bar-filled {
+    background-color: #fa484b;
+    width: 0%;
+}
+
+.seek-circle {
+    height: 0.5em;
+    border-radius: 50%;
+    background-color: #fff;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0px;
+    z-index: 1;
+    width: 0.5em;
+}
+
+.progress-circle {
+    height: 0.75em;
+    border-radius: 50%;
+    background-color: #fff;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0px;
+    z-index: 1;
+    width: 0.75em;
+}
+
+.metadata-text-container {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Arial';
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+}
+
+.metadata-text-container > * {
+    margin-bottom: 0.5em;
+    align-self: flex-end;
+}
+
+.metadata-text-container > .song-title {
+    color: #fff;
+    font-size: 1.5em;
+}
+
+.metadata-text-container > .song-artist {
+    color: #fa484b;
+}
