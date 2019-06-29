@@ -1,8 +1,6 @@
 import { Component, 
          ViewChild, 
-         ElementRef, 
-         Renderer2, 
-         enableProdMode}        from '@angular/core';
+         ElementRef }           from '@angular/core';
 import { MediaService, 
          MediaServiceListener } from './media.service'
 
@@ -15,7 +13,6 @@ import { MediaService,
 export class AppComponent implements MediaServiceListener {
 
   private _mediaService  : MediaService;
-  private _renderer      : Renderer2;
 
   title = 'auxbox-web-client';
   showAudio = false;
@@ -33,25 +30,30 @@ export class AppComponent implements MediaServiceListener {
     buffered: 0,
     filled: 0,
     remaining: 0,
+    img: '',
+    displayTime: '',
   };
   controlState = {
     shuffle: false,
     volumeDropdownOpen: false,
     hoverPercent: 0,
-    highlightedPercent: 0
+    highlightedPercent: 0,
+    volumeFilledPercent: 0,
+    volumeDropdownClicked: false,
   };
 
   @ViewChild('player', { static: false }) $player : ElementRef;
   @ViewChild('seekbar', { static: false }) $seekbar : ElementRef;
   @ViewChild('seekcircle', { static: false }) $seekcircle : ElementRef;
+  @ViewChild('volumedropdown', { static: false }) $volumedropdown : ElementRef;
 
-  constructor(service : MediaService, renderer : Renderer2) { 
+  constructor(service : MediaService) { 
     this._mediaService = service;
     this._mediaService.registerListener(this)
-    this._renderer = renderer;
   }
 
   ngAfterViewInit() {
+    this.$player.nativeElement.volume = 0.5;
     this.$player.nativeElement.addEventListener('timeupdate', event => {
       this.updateTime();
       this.recalculateFilledRatio();
@@ -70,6 +72,9 @@ export class AppComponent implements MediaServiceListener {
     this.$player.nativeElement.addEventListener('ended', event => {
       this._mediaService.skipForward();
     })
+    this.$player.nativeElement.addEventListener('volumechange', event => {
+      this.controlState.volumeFilledPercent = this.$player.nativeElement.volume * 100;
+    });
     this.$seekbar.nativeElement.addEventListener('mousemove', event => {
       const rect = this.$seekbar.nativeElement.getBoundingClientRect();
       const x = event.pageX - rect.x;
@@ -80,6 +85,7 @@ export class AppComponent implements MediaServiceListener {
       this.controlState.hoverPercent = 0;
       this.recalculateFilledRatio();
     })
+    this.controlState.volumeFilledPercent = this.$player.nativeElement.volume * 100;
   }
 
   async onSubmit() {
@@ -120,7 +126,6 @@ export class AppComponent implements MediaServiceListener {
     this.$player.nativeElement.src = this.currentSong.uri;
     this.showAudio = true;
     this.showInput = false;
-    console.log(this.currentSong)
   }
 
   onSongsLoadError(err) {
@@ -152,5 +157,24 @@ export class AppComponent implements MediaServiceListener {
     //if (this.controlState.shuffle) {
     this._mediaService.shuffle();
     //}
+  }
+
+  volumeMouseDown(event) {
+    this.controlState.volumeDropdownClicked = true;
+    this.changeVolume(event);
+  }
+
+  volumeMouseUp(event) {
+    this.controlState.volumeDropdownClicked = false;
+    this.changeVolume(event);
+  }
+
+  changeVolume(event) {
+    if (this.controlState.volumeDropdownClicked) {
+      const rect = this.$volumedropdown.nativeElement.getBoundingClientRect();
+      const y = event.pageY - rect.y;
+      this.controlState.volumeFilledPercent = 100 - (y * 100 / rect.height);
+      this.$player.nativeElement.volume = this.controlState.volumeFilledPercent / 100;
+    }
   }
 }

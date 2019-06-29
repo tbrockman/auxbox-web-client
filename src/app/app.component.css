@@ -1,7 +1,13 @@
 @media only screen and (max-width: 700px) {
     .main-container {
         min-width: 0px !important;
-        width: 100%;
+        width: 100% !important;
+    }
+ }
+
+ @media (hover: none) {
+    .audio-control-container svg:hover {
+        fill: #fa484b;
     }
  }
 
@@ -14,15 +20,35 @@
 }
 
 .main-container {
-    max-width: 100%;
-    min-width: 600px;
+    width: 600px;
     overflow: hidden;
-    padding: 2rem;
+    padding: 0 2rem;
+    height: 100%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.song-container {
+    height: 100%;
+    width: 100%;
+}
+
+.top-half {
+    height: 50%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.bottom-half {
+    height: 50%;
 }
 
 .key-input-form {
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 .key-input-form > * {
@@ -125,18 +151,28 @@
     width: 0.75em;
 }
 
+.metadata-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.metadata-image {
+    height: 75px;
+    width: 75px;
+}
+
 .metadata-text-container {
+    align-items: center;
     display: flex;
     flex-direction: column;
     font-family: 'Arial';
-    justify-content: center;
-    align-items: center;
     text-transform: uppercase;
 }
 
 .metadata-text-container > * {
-    margin-bottom: 0.5em;
     align-self: flex-end;
+    margin-bottom: 0.25em;
+    text-align: right;
 }
 
 .metadata-text-container > .song-title {
@@ -146,4 +182,35 @@
 
 .metadata-text-container > .song-artist {
     color: #fa484b;
+}
+
+.volume-button {
+    position: relative;
+}
+
+.volume-dropdown-container {
+    position: absolute;
+    height: 300%;
+    width: 1rem;
+    margin: 2rem auto;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.volume-dropdown-container:hover {
+    cursor: pointer;
+}
+
+.volume-dropdown-filled {
+    background-color: #fa484b;
+    height: 50%;
+    width: 100%;
+}
+
+.volume-dropdown-empty {
+    background-color: #fa484b36;
+    width: 100%;
+    flex: 1;
 }

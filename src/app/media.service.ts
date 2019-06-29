@@ -1,7 +1,7 @@
 import { Injectable }              from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { DomSanitizer }            from '@angular/platform-browser';
 import { environment }             from './../environments/environment';
-import fetchFileAsBuffer        from 'id3-parser/lib/universal';
 
 @Injectable({
   providedIn: 'root'
@@ -10,19 +10,21 @@ import fetchFileAsBuffer        from 'id3-parser/lib/universal';
 export class MediaService {
 
   API_ENDPOINT   : string = "https://api.auxb0x.com";
-  SONGS_ENDPOINT : string = "/songs";  
+  SONGS_ENDPOINT : string = this.API_ENDPOINT + "/songs";  
   API_KEY        : string = "";
 
   private _apiKey        : string;
   private _cookies       : {};
   private _currentIndex  : number = 0;
+  private _domSanitizer  : DomSanitizer;
   private _httpClient    : HttpClient;
   private _httpOptions   : {};
   private _listener      : MediaServiceListener;
   private _songUrls      : string[];
 
-  constructor(httpClient : HttpClient) {
+  constructor(httpClient : HttpClient, domSanitizer: DomSanitizer) {
     this._httpClient = httpClient;
+    this._domSanitizer = domSanitizer;
   }
   
   set apiKey(apiKey : string) {
@@ -39,14 +41,15 @@ export class MediaService {
     let response;
     try {
       if (!environment.production) {
-        this._songUrls = ['/assets/10 Bands [Remix].mp3', 
-                          '/assets/13 Youforia [Mac Miller].mp3', 
-                          '/assets/2099 flow.mp3', 
-                          '/assets/A Million Miles Away.mp3'];
+        this._songUrls = ['https://auxbox-public.s3-us-west-2.amazonaws.com/Nat Port - Sydney.mp3',
+                          'https://auxbox-public.s3-us-west-2.amazonaws.com/Nat Port - Futurebeats Minimix 01.mp3', 
+                          'https://auxbox-public.s3-us-west-2.amazonaws.com/Nat Port - ftc171.mp3', 
+                          'https://auxbox-public.s3-us-west-2.amazonaws.com/Nat Port - ftc173.mp3'];
       }
       else {
-        response = await this._httpClient.get(this.API_ENDPOINT + this.SONGS_ENDPOINT, 
-                                              this._httpOptions).toPromise();
+        response = await this._httpClient.get(this.SONGS_ENDPOINT, 
+                                              this._httpOptions)
+                                          .toPromise();
         this._songUrls = response.tracks;
       }
       this.notifySongsLoaded();
@@ -57,13 +60,29 @@ export class MediaService {
     return response
   }
 
+  async getSongTag(filename) {
+    const options = {
+      headers: new HttpHeaders({
+        'X-Api-Key': this._apiKey
+      })
+    }
+    const uri = this.SONGS_ENDPOINT + '/' + filename;
+    const encoded = encodeURI(uri);
+    const response = await this._httpClient.get(encoded, options)
+                                           .toPromise();
+    return response;
+  }
+
   async getSong(index : number) {
     const protocol = environment.production ? 'https://' : '';
+    const split = this._songUrls[index].split('/');
+    const filename = split[split.length - 1];
     const uri = protocol + this._songUrls[index];
-    //const tag = await fetchFileAsBuffer(uri);
+    const tag = await this.getSongTag(filename);
+
     let song = {
       uri: uri,
-      metadata: undefined
+      metadata: tag,
     };
     return song;
   }
