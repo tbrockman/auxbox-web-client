@@ -8,6 +8,7 @@
  @media (hover: none) {
     .audio-control-container svg:hover {
         fill: #fa484b;
+        cursor: default;
     }
  }
 
@@ -19,6 +20,10 @@
     justify-content: center;
 }
 
+.logo {
+    margin-bottom: 3rem;
+}
+
 .main-container {
     width: 600px;
     overflow: hidden;
@@ -27,6 +32,7 @@
     align-items: center;
     display: flex;
     justify-content: center;
+    flex-direction: column;
 }
 
 .song-container {
@@ -182,6 +188,10 @@
 
 .metadata-text-container > .song-artist {
     color: #fa484b;
+}
+
+.volume-is-open > svg {
+    fill: #fff;
 }
 
 .volume-button {

@@ -22,24 +22,24 @@ export class AppComponent implements MediaServiceListener {
     apiKey: ''
   };
   currentSong = {
-    uri: '',
+    buffered: 0,
+    displayTime: '',
+    filled: 0,
+    img: '',
     isPlaying: false,
     metadata: {},
-    timeElapsed: 0,
-    songLength: 0,
-    buffered: 0,
-    filled: 0,
     remaining: 0,
-    img: '',
-    displayTime: '',
+    songLength: 0,
+    timeElapsed: 0,
+    uri: '',
   };
   controlState = {
-    shuffle: false,
-    volumeDropdownOpen: false,
-    hoverPercent: 0,
     highlightedPercent: 0,
+    hoverPercent: 0,
+    shuffle: false,
+    volumeSliderSelected: false,
+    volumeDropdownOpen: false,
     volumeFilledPercent: 0,
-    volumeDropdownClicked: false,
   };
 
   @ViewChild('player', { static: false }) $player : ElementRef;
@@ -53,7 +53,30 @@ export class AppComponent implements MediaServiceListener {
   }
 
   ngAfterViewInit() {
-    this.$player.nativeElement.volume = 0.5;
+    this.$player.nativeElement.volume = 0.75;
+    
+    const key = localStorage.getItem('apiKey');
+
+    if (key != undefined) {
+      this._mediaService.apiKey = key;
+      this._mediaService.fetchSongs();
+    }
+
+    document.addEventListener('mousedown', event => {
+      if (!this.$volumedropdown || (event.target != this.$volumedropdown.nativeElement && 
+                                    !this.$volumedropdown.nativeElement.contains(event.target))) {
+        if (this.controlState.volumeDropdownOpen) {
+          this.toggleVolumeDropdown();
+        }
+      }
+    })
+    document.addEventListener('mouseup', event => {
+      if (this.controlState.volumeSliderSelected) {
+        this.$player.nativeElement.volume = this.controlState.volumeFilledPercent / 100
+        this.toggleVolumeDropdown();
+      }
+    })
+
     this.$player.nativeElement.addEventListener('timeupdate', event => {
       this.updateTime();
       this.recalculateFilledRatio();
@@ -84,11 +107,13 @@ export class AppComponent implements MediaServiceListener {
     this.$seekbar.nativeElement.addEventListener('mouseleave', event => {
       this.controlState.hoverPercent = 0;
       this.recalculateFilledRatio();
-    })
+    });
+
     this.controlState.volumeFilledPercent = this.$player.nativeElement.volume * 100;
   }
 
   async onSubmit() {
+    localStorage.setItem('apiKey', this.inputForm.apiKey);
     this._mediaService.apiKey = this.inputForm.apiKey;
     this._mediaService.fetchSongs();
   }
@@ -124,6 +149,10 @@ export class AppComponent implements MediaServiceListener {
     this.currentSong.uri = song.uri;
     this.currentSong.metadata = song.metadata;
     this.$player.nativeElement.src = this.currentSong.uri;
+    this.swapToAudioView()
+  }
+
+  swapToAudioView() {
     this.showAudio = true;
     this.showInput = false;
   }
@@ -150,6 +179,7 @@ export class AppComponent implements MediaServiceListener {
 
   toggleVolumeDropdown() {
     this.controlState.volumeDropdownOpen = !this.controlState.volumeDropdownOpen;
+    this.controlState.volumeSliderSelected = false;
   }
 
   toggleShuffle() {
@@ -160,17 +190,17 @@ export class AppComponent implements MediaServiceListener {
   }
 
   volumeMouseDown(event) {
-    this.controlState.volumeDropdownClicked = true;
+    this.controlState.volumeSliderSelected = true;
     this.changeVolume(event);
   }
 
   volumeMouseUp(event) {
-    this.controlState.volumeDropdownClicked = false;
+    this.controlState.volumeSliderSelected = false;
     this.changeVolume(event);
   }
 
   changeVolume(event) {
-    if (this.controlState.volumeDropdownClicked) {
+    if (this.controlState.volumeSliderSelected) {
       const rect = this.$volumedropdown.nativeElement.getBoundingClientRect();
       const y = event.pageY - rect.y;
       this.controlState.volumeFilledPercent = 100 - (y * 100 / rect.height);
