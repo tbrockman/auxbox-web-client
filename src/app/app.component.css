@@ -32,12 +32,15 @@
     align-items: center;
     display: flex;
     justify-content: center;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 .song-container {
     height: 100%;
-    width: 100%;
+    overflow: hidden;
+    flex: 1;
+    animation-name: fade-in;
+    animation-duration: 2s;
 }
 
 .top-half {
@@ -54,7 +57,8 @@
 .key-input-form {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    overflow: hidden;
+    flex: 1;
 }
 
 .key-input-form > * {
@@ -223,4 +227,29 @@
     background-color: #fa484b36;
     width: 100%;
     flex: 1;
+}
+
+.spacer {
+    animation-name: shrink;
+    animation-duration: 1.25s;
+}
+
+.spacer-enter {
+    animation-name: grow;
+    animation-duration: 1.25s;
+}
+
+@keyframes shrink {
+    from {width: 700px;}
+    to {width: 0;}
+}
+
+@keyframes grow {
+    from {width: 0;}
+    to {width: 700px;}
+}
+
+@keyframes fade-in {
+    from {opacity: 0;}
+    to {opacity: 1;}
 }

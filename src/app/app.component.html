@@ -1,6 +1,7 @@
-<div class="app-container">
+<div class="app-container" (window:keypress)="keyPress($event)" >
   <div class="main-container">
-    <form (ngSubmit)="onSubmit()" class="key-input-form" *ngIf="showInput">
+    <app-spacer [showSpacer]="initialized"></app-spacer>
+    <form @contractForm [hidden]="loading" (ngSubmit)="onSubmit()" class="key-input-form" *ngIf="showInput">
         <input required [(ngModel)]="inputForm.apiKey" type="password" placeholder="API KEY" name="apiKey"/>
         <button type="submit">start</button>
     </form>

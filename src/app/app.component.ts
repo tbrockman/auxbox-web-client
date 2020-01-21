@@ -4,10 +4,34 @@ import { Component,
 import { MediaService, 
          MediaServiceListener } from './media.service'
 
+import {
+          trigger,
+          state,
+          style,
+          animate,
+          transition
+        } from '@angular/animations';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
+  animations: [
+    trigger('contractForm', [
+      // transition(':enter', [
+      //   style({
+      //     width: '0px'
+      //   }),
+      //   animate('1s', style({width: '700px'}))
+      // ]), 
+      transition(':leave', [
+        style({
+          width: '100%'
+        }),
+        animate('1s cubic-bezier(0.19, 1, 0.22, 1)', style({width: '0px'}))
+      ])
+    ])
+  ],
 })
 
 export class AppComponent implements MediaServiceListener {
@@ -15,8 +39,11 @@ export class AppComponent implements MediaServiceListener {
   private _mediaService  : MediaService;
 
   title = 'auxbox-web-client';
+  initialized = false;
+  loading = true;
+  formSubmitted = false;
   showAudio = false;
-  showInput = true;
+  showInput = false;
   showSeekCircle = false;
   inputForm = {
     apiKey: ''
@@ -52,8 +79,7 @@ export class AppComponent implements MediaServiceListener {
     this._mediaService.registerListener(this)
   }
 
-  ngAfterViewInit() {
-    this.$player.nativeElement.volume = 0.75;
+  ngOnInit() {
     
     const key = localStorage.getItem('apiKey');
 
@@ -61,6 +87,14 @@ export class AppComponent implements MediaServiceListener {
       this._mediaService.apiKey = key;
       this._mediaService.fetchSongs();
     }
+    else {
+      this.showInput = true;
+    }
+    this.loading = false;
+  }
+
+  ngAfterViewInit() {
+    this.$player.nativeElement.volume = 0.75;
 
     document.addEventListener('mousedown', event => {
       if (!this.$volumedropdown || (event.target != this.$volumedropdown.nativeElement && 
@@ -69,14 +103,23 @@ export class AppComponent implements MediaServiceListener {
           this.toggleVolumeDropdown();
         }
       }
-    })
+    });
     document.addEventListener('mouseup', event => {
       if (this.controlState.volumeSliderSelected) {
         this.$player.nativeElement.volume = this.controlState.volumeFilledPercent / 100
         this.toggleVolumeDropdown();
       }
-    })
-
+    });
+    document.addEventListener('keydown', event => {
+      if (event.which == 32) {
+        if (this.currentSong.isPlaying) {
+          this.pause();
+        }
+        else {
+          this.play();
+        }
+      }
+    });
     this.$player.nativeElement.addEventListener('timeupdate', event => {
       this.updateTime();
       this.recalculateFilledRatio();
@@ -113,7 +156,8 @@ export class AppComponent implements MediaServiceListener {
   }
 
   async onSubmit() {
-    localStorage.setItem('apiKey', this.inputForm.apiKey);
+    this.formSubmitted = true;
+    this.loading = true;
     this._mediaService.apiKey = this.inputForm.apiKey;
     this._mediaService.fetchSongs();
   }
@@ -145,11 +189,16 @@ export class AppComponent implements MediaServiceListener {
   }
 
   async onSongsLoad() {
+    if (this._mediaService.apiKey) {
+      localStorage.setItem('apiKey', this._mediaService.apiKey);
+    }
     const song = await this._mediaService.getSong(0);
     this.currentSong.uri = song.uri;
     this.currentSong.metadata = song.metadata;
     this.$player.nativeElement.src = this.currentSong.uri;
-    this.swapToAudioView()
+    this.swapToAudioView();
+    this.initialized = true;
+    this.loading = false;
   }
 
   swapToAudioView() {
@@ -204,7 +253,19 @@ export class AppComponent implements MediaServiceListener {
       const rect = this.$volumedropdown.nativeElement.getBoundingClientRect();
       const y = event.pageY - rect.y;
       this.controlState.volumeFilledPercent = 100 - (y * 100 / rect.height);
-      this.$player.nativeElement.volume = this.controlState.volumeFilledPercent / 100;
+      this.$player.nativeElement.volume = Math.max(0, Math.min(this.controlState.volumeFilledPercent / 100, 1));
+    }
+  }
+
+  keyPress(event) {
+     if (event.key == 'a') {
+      this.skipBackward();
+    }
+    else if (event.key == 'd') {
+      this.skipForward();
+    }
+    else if (event.key == 's') {
+      this.toggleShuffle();
     }
   }
 }
