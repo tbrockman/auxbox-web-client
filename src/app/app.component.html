@@ -1,11 +1,74 @@
 <div class="app-container" (window:keypress)="keyPress($event)" >
   <div class="main-container">
     <app-spacer [showSpacer]="initialized"></app-spacer>
-    <form @contractForm [hidden]="loading" (ngSubmit)="onSubmit()" class="key-input-form" *ngIf="showInput">
+    <!-- <div [hidden]="!loading">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="200px"
+        height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve">
+          <style type="text/css">
+            .first-bar {
+              animation: scale 0.35s cubic-bezier(0.29, 0.01, 0.26, 0.99) infinite alternate, appear 0.35s cubic-bezier(0.46, 0.01, 0, 1) 1 forwards;
+              transform-origin: 25px 50%;
+            }
+            .second-bar {
+              animation: scale 0.35s 0.15s cubic-bezier(0.29, 0.01, 0.26, 0.99) infinite alternate, appear 0.35s 0.15s cubic-bezier(0.46, 0.01, 0, 1) 1 forwards;
+              transform-origin: 70px 50%;
+            }
+            .third-bar {
+              animation: scale 0.35s 0.3s cubic-bezier(0.29, 0.01, 0.26, 0.99) infinite alternate, appear 0.35s 0.3s cubic-bezier(0.46, 0.01, 0, 1) 1 forwards;
+              transform-origin: 115px 50%;
+            }
+            .fourth-bar {
+              animation: scale 0.35s 0.45s cubic-bezier(0.29, 0.01, 0.26, 0.99) infinite alternate, appear 0.35s 0.45s cubic-bezier(0.46, 0.01, 0.21, 1) 1 forwards;
+              transform-origin: 160px 50%;
+            }
+
+            @keyframes scale {
+              0% {
+                transform: scale(1, 0.75);
+              }
+
+              100% {
+                transform: scale(1, 1.75);
+              }
+            }
+
+            @keyframes appear {
+              0% {
+                height: 55px;
+              }
+
+              100% {
+                height: 55px;
+              }
+            }
+            </style>
+      <g id="Layer_1">
+        <rect class="first-bar" x="25" y="67" fill="#F04A4D" width="15" height="0"/>
+        <rect class="second-bar" x="70" y="67" fill="#F04A4D" width="15" height="0"/>
+        <rect class="third-bar" x="115" y="67" fill="#F04A4D" width="15" height="0"/>
+        <rect class="fourth-bar" x="160" y="67" fill="#F04A4D" width="15" height="0"/>
+      </g>
+      </svg>
+    </div> -->
+    <div *ngIf="errorMessage" class="error-message">
+      <div>
+        error
+      </div>
+      <div>
+        <div class="error-message-text">{{errorMessage}}</div>
+        <div class="error-back-button" (click)="reinit()">
+          <div class="error-back-button-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          </div>
+          <div class="error-back-button-text">back</div>
+        </div>
+      </div>
+    </div>
+    <form @contractForm [hidden]="loading" (ngSubmit)="onSubmit()" class="key-input-form" *ngIf="showInput && !errorMessage">
         <input required [(ngModel)]="inputForm.apiKey" type="password" placeholder="API KEY" name="apiKey"/>
         <button type="submit">start</button>
     </form>
-    <div [hidden]="!showAudio" class="song-container">
+    <div [hidden]="!showAudio || errorMessage" class="song-container">
       <audio crossorigin="use-credentials" preload="auto" #player>
       </audio>
       <div class="top-half">

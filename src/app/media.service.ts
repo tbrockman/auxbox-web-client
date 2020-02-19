@@ -37,6 +37,10 @@ export class MediaService {
     };
   }
 
+  get apiKey(): string {
+    return this._apiKey;
+  }
+
   async fetchSongs() {
     let response;
     try {

@@ -1,6 +1,7 @@
 import { Component, 
          ViewChild, 
          ElementRef }           from '@angular/core';
+import { Router, NavigationEnd  } from '@angular/router';
 import { MediaService, 
          MediaServiceListener } from './media.service'
 
@@ -11,6 +12,7 @@ import {
           animate,
           transition
         } from '@angular/animations';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -24,12 +26,12 @@ import {
       //   }),
       //   animate('1s', style({width: '700px'}))
       // ]), 
-      transition(':leave', [
-        style({
-          width: '100%'
-        }),
-        animate('1s cubic-bezier(0.19, 1, 0.22, 1)', style({width: '0px'}))
-      ])
+      // transition(':leave', [
+      //   style({
+      //     width: '100%'
+      //   }),
+      //   animate('1s cubic-bezier(0.19, 1, 0.22, 1)', style({width: '0px'}))
+      // ])
     ])
   ],
 })
@@ -37,6 +39,7 @@ import {
 export class AppComponent implements MediaServiceListener {
 
   private _mediaService  : MediaService;
+  private _router : Router;
 
   title = 'auxbox-web-client';
   initialized = false;
@@ -45,6 +48,7 @@ export class AppComponent implements MediaServiceListener {
   showAudio = false;
   showInput = false;
   showSeekCircle = false;
+  errorMessage = "";
   inputForm = {
     apiKey: ''
   };
@@ -74,23 +78,42 @@ export class AppComponent implements MediaServiceListener {
   @ViewChild('seekcircle', { static: false }) $seekcircle : ElementRef;
   @ViewChild('volumedropdown', { static: false }) $volumedropdown : ElementRef;
 
-  constructor(service : MediaService) { 
+  constructor(service : MediaService, router : Router, ) { 
     this._mediaService = service;
-    this._mediaService.registerListener(this)
+    this._mediaService.registerListener(this);
+    this._router = router;
   }
+
+
 
   ngOnInit() {
     
-    const key = localStorage.getItem('apiKey');
+    let key = undefined;
+    this._router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(event => {
+      const url = event['url'];
+      const parsed = this._router.parseUrl(url);
+      const params = parsed.queryParams;
+  
+      for (const k in params) {
+  
+        if (k == 'api') {
+          key = params[k];
+        }
+      }
+      key = key ? key : localStorage.getItem('apiKey');
+  
+      if (key != undefined) {
+        this._mediaService.apiKey = key;
+        this._mediaService.fetchSongs();
+      }
+      else {
+        this.showInput = true;
+      }
+      this.loading = false;
+    })
 
-    if (key != undefined) {
-      this._mediaService.apiKey = key;
-      this._mediaService.fetchSongs();
-    }
-    else {
-      this.showInput = true;
-    }
-    this.loading = false;
   }
 
   ngAfterViewInit() {
@@ -183,6 +206,7 @@ export class AppComponent implements MediaServiceListener {
     this.currentSong.metadata = song.metadata;
     this.$player.nativeElement.src = this.currentSong.uri;
     this.recalculateFilledRatio();
+    
     if (this.currentSong.isPlaying) {
       this.play();
     }
@@ -208,6 +232,15 @@ export class AppComponent implements MediaServiceListener {
 
   onSongsLoadError(err) {
     console.log(err);
+    localStorage.removeItem('apiKey');
+    this.errorMessage = "Could not retrieve songs.";
+  }
+
+  reinit() {
+    this.showAudio = false;
+    this.showInput = true;
+    this.errorMessage = "";
+    this.loading = false;
   }
 
   play() {

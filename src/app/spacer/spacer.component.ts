@@ -36,6 +36,5 @@ export class SpacerComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.showSpacer);
   }
 }

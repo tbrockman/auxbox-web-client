@@ -20,6 +20,67 @@
     justify-content: center;
 }
 
+.error-message {
+    padding: 0.5rem 1rem;
+    text-align: center;
+    text-transform: uppercase;
+    color: white;
+    font-family: Arial;
+    font-weight: bold;
+    display: flex;
+    align-items: flex-end;
+}
+
+.error-message > :first-child {
+    background-color: #fa484b;
+    font-size: 4rem;
+    margin-right: 1rem;
+    padding: 0 1rem;
+    align-self: flex-start;
+}
+
+.error-message > div {
+    margin: 0;
+}
+
+.error-message > :last-child {
+    font-size: 2rem;
+    text-align: left;
+}
+
+.error-message-text {
+    align-self: flex-start;
+    justify-self: flex-start;
+}
+
+.error-back-button {
+    display: flex;
+    justify-self: flex-start;
+    align-items: flex-start;
+    width: fit-content;
+    color: #1a1616;
+    background-color: #fff;
+    margin-top: 0.25rem;
+    fill: #1a1616;
+    padding-right: 0.5rem;
+}
+
+.error-back-button:hover {
+    background-color: #1a1616 !important;
+    color: #fff !important;
+    cursor: pointer;
+    fill: #fff;
+}
+
+.error-back-button-arrow {
+    align-self: flex-start;
+    margin-right: -1px;
+}
+
+.error-back-button-text {
+    color: inherit;
+}
+
 .logo {
     margin-bottom: 3rem;
 }
