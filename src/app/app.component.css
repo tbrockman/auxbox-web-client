@@ -109,10 +109,10 @@
 }
 
 .song-container {
-    overflow: hidden;
+    /* overflow: hidden; */
     flex: 1;
     animation-name: fade-in;
-    animation-duration: 2s;
+    animation-duration: 0.5s;
 }
 
 .top-half {
