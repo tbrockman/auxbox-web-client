@@ -3,6 +3,18 @@
         min-width: 0px !important;
         width: 100% !important;
     }
+
+    .error-message {
+        flex-wrap: wrap;
+    }
+
+    .error-message > div {
+        margin-bottom: 1rem !important;
+    }
+
+    .error-message-text { 
+        margin-bottom: 1rem !important;
+    }
  }
 
  @media (hover: none) {
@@ -97,7 +109,6 @@
 }
 
 .song-container {
-    height: 100%;
     overflow: hidden;
     flex: 1;
     animation-name: fade-in;

@@ -11,22 +11,6 @@ import {
   selector: 'app-spacer',
   templateUrl: './spacer.component.html',
   styleUrls: ['./spacer.component.css'],
-  animations: [
-    trigger('expandSpacer', [
-      // transition(':enter', [
-      //   style({
-      //     width: '0px'
-      //   }),
-      //   animate('1s', style({width: '700px'}))
-      // ]), 
-      transition(':enter', [
-        style({
-          width: '700px'
-        }),
-        animate('1s cubic-bezier(0.19, 1, 0.22, 1)', style({width: '0px'}))
-      ])
-    ])
-  ],
 })
 
 export class SpacerComponent implements OnInit {

@@ -8,11 +8,13 @@ import { AppRoutingModule }        from './app-routing.module';
 import { AppComponent }            from './app.component';
 import { CookieService }           from 'ngx-cookie-service';
 import { SpacerComponent }         from './spacer/spacer.component';
+import { SineLoaderComponent } from './sine-loader/sine-loader.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SpacerComponent
+    SpacerComponent,
+    SineLoaderComponent
   ],
   imports: [
     BrowserModule,

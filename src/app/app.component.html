@@ -1,6 +1,7 @@
 <div class="app-container" (window:keypress)="keyPress($event)" >
   <div class="main-container">
     <app-spacer [showSpacer]="initialized"></app-spacer>
+    <app-sine-loader #sineloader></app-sine-loader>
     <!-- <div [hidden]="!loading">
       <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="200px"
         height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve">
@@ -68,7 +69,7 @@
         <input required [(ngModel)]="inputForm.apiKey" type="password" placeholder="API KEY" name="apiKey"/>
         <button type="submit">start</button>
     </form>
-    <div [hidden]="!showAudio || errorMessage" class="song-container">
+    <div [hidden]="!showAudio || errorMessage || loading" class="song-container">
       <audio crossorigin="use-credentials" preload="auto" #player>
       </audio>
       <div class="top-half">

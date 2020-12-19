@@ -18,22 +18,6 @@ import {filter} from 'rxjs/operators';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  animations: [
-    trigger('contractForm', [
-      // transition(':enter', [
-      //   style({
-      //     width: '0px'
-      //   }),
-      //   animate('1s', style({width: '700px'}))
-      // ]), 
-      // transition(':leave', [
-      //   style({
-      //     width: '100%'
-      //   }),
-      //   animate('1s cubic-bezier(0.19, 1, 0.22, 1)', style({width: '0px'}))
-      // ])
-    ])
-  ],
 })
 
 export class AppComponent implements MediaServiceListener {
@@ -77,14 +61,13 @@ export class AppComponent implements MediaServiceListener {
   @ViewChild('seekbar', { static: false }) $seekbar : ElementRef;
   @ViewChild('seekcircle', { static: false }) $seekcircle : ElementRef;
   @ViewChild('volumedropdown', { static: false }) $volumedropdown : ElementRef;
+  @ViewChild('sineloader', { read: ElementRef, static: false }) $sineloader : ElementRef;
 
   constructor(service : MediaService, router : Router, ) { 
     this._mediaService = service;
     this._mediaService.registerListener(this);
     this._router = router;
   }
-
-
 
   ngOnInit() {
     
@@ -111,14 +94,17 @@ export class AppComponent implements MediaServiceListener {
       else {
         this.showInput = true;
       }
-      this.loading = false;
     })
-
   }
 
   ngAfterViewInit() {
-    this.$player.nativeElement.volume = 0.75;
 
+
+    if (this.$sineloader.nativeElement) {
+      this.$sineloader.nativeElement.style.display = this.loading ? "initial": "none";
+    }
+
+    this.$player.nativeElement.volume = 0.75;
     document.addEventListener('mousedown', event => {
       if (!this.$volumedropdown || (event.target != this.$volumedropdown.nativeElement && 
                                     !this.$volumedropdown.nativeElement.contains(event.target))) {
@@ -181,6 +167,10 @@ export class AppComponent implements MediaServiceListener {
   async onSubmit() {
     this.formSubmitted = true;
     this.loading = true;
+
+    if (this.$sineloader.nativeElement) {
+      this.$sineloader.nativeElement.style.display = this.loading ? "initial": "none";
+    }
     this._mediaService.apiKey = this.inputForm.apiKey;
     this._mediaService.fetchSongs();
   }
@@ -223,6 +213,10 @@ export class AppComponent implements MediaServiceListener {
     this.swapToAudioView();
     this.initialized = true;
     this.loading = false;
+
+    if (this.$sineloader.nativeElement) {
+      this.$sineloader.nativeElement.style.display = this.loading ? "initial": "none";
+    }
   }
 
   swapToAudioView() {
@@ -241,6 +235,10 @@ export class AppComponent implements MediaServiceListener {
     this.showInput = true;
     this.errorMessage = "";
     this.loading = false;
+
+    if (this.$sineloader.nativeElement) {
+      this.$sineloader.nativeElement.style.display = this.loading ? "initial": "none";
+    }
   }
 
   play() {
