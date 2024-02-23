@@ -1,6 +1,6 @@
 # auxbox-web-client
 
-Code for a simple custom audio player, running at auxb0x.com.
+Code for a simple custom audio player, running at [auxb0x.com](https://auxb0x.com).
 
 ## Development server
 
