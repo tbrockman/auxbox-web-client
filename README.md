@@ -1,6 +1,6 @@
-# AuxboxWebClient
+# auxbox-web-client
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.2.
+Code for a simple custom audio player, running at auxb0x.com.
 
 ## Development server
 
